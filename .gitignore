@@ -10,3 +10,8 @@ models/models--Systran--faster-whisper-base
 *.exe
 *.zip
 stslib/__pycache__
+.venv
+
+# poetry
+poetry.lock
+pyproject.toml

@@ -1,4 +1,6 @@
-torch==2.1.2
+nvidia-cublas-cu11
+nvidia-cudnn-cu11==8.9.6.50
+torch==2.4.0+cu121
 flask
 requests
 gevent

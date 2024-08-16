@@ -1,0 +1,5 @@
+flask
+requests
+gevent
+faster-whisper
+fsspec
