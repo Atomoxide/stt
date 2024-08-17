@@ -19,3 +19,7 @@ pyproject.toml
 # ffmpeg
 ffmpeg
 ffprobe
+
+# test audio
+test_audio
+testApi.py

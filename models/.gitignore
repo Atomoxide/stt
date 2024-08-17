@@ -17,3 +17,7 @@ tmp
 *.log
 models--Systran--faster-whisper-base
 models--Systran--faster-whisper-base/*
+models--Systran--faster-whisper-medium
+models--Systran--faster-whisper-medium/*
+models--Systran--faster-whisper-small
+models--Systran--faster-whisper-small/*
