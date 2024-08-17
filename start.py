@@ -13,7 +13,7 @@ import stslib
 from stslib import cfg, tool
 from stslib.cfg import ROOT_DIR
 from faster_whisper import WhisperModel
-
+import glob
 
 class CustomRequestHandler(WSGIHandler):
     def log_request(self):
@@ -228,6 +228,7 @@ def api():
 
         segments,_ = model.transcribe(wav_file, beam_size=sets.get('beam_size'),best_of=sets.get('best_of'),temperature=0 if sets.get('temperature')==0 else [0.0,0.2,0.4,0.6,0.8,1.0],condition_on_previous_text=sets.get('condition_on_previous_text'),vad_filter=sets.get('vad'),
     vad_parameters=dict(min_silence_duration_ms=300,max_speech_duration_s=10.5),language=language,initial_prompt=None if language!='zh' else sets.get('initial_prompt_zh'))
+        os.remove(wav_file)
         raw_subtitles = []
         for  segment in segments:
             start = int(segment.start * 1000)
@@ -264,7 +265,7 @@ def checkupdate():
 
 if __name__ == '__main__':
     http_server = None
-    os.system("""export LD_LIBRARY_PATH=`python3 -c 'import os; import nvidia.cublas.lib; import nvidia.cudnn.lib; print(os.path.dirname(nvidia.cublas.lib.__file__) + ":" + os.path.dirname(nvidia.cudnn.lib.__file__))'`""")
+    # os.system("""export LD_LIBRARY_PATH=`python3 -c 'import os; import nvidia.cublas.lib; import nvidia.cudnn.lib; print(os.path.dirname(nvidia.cublas.lib.__file__) + ":" + os.path.dirname(nvidia.cudnn.lib.__file__))'`""")
     try:
         threading.Thread(target=tool.checkupdate).start()
         try:
@@ -272,11 +273,17 @@ if __name__ == '__main__':
                 print('\n如果设备使用英伟达显卡并且CUDA环境已正确安装，可修改set.ini中\ndevtype=cpu 为 devtype=cuda, 然后重新启动以加快识别速度\n')
             host = cfg.web_address.split(':')
             http_server = WSGIServer((host[0], int(host[1])), app, handler_class=CustomRequestHandler)
-            threading.Thread(target=tool.openweb, args=(cfg.web_address,)).start()
+            # threading.Thread(target=tool.openweb, args=(cfg.web_address,)).start()
             http_server.serve_forever()
         finally:
             if http_server:
                 http_server.stop()
+    except KeyboardInterrupt:
+        print("Keyborad Stop")
+        http_server.stop()
+        files_to_purge = glob.glob("./static/tmp/*")
+        for file in files_to_purge:
+            os.remove(file)
     except Exception as e:
         if http_server:
             http_server.stop()
