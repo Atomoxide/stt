@@ -13,6 +13,8 @@
 </div>
 
 ---
+# Atomoxide
+修改了一些dependencies的版本兼容性问题
 
 
 # 语音识别转文字工具
