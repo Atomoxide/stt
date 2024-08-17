@@ -1,16 +1,12 @@
 import logging
 import re
-import threading
-import sys
-import torch
-from flask import Flask, request, render_template, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 import os
-from gevent.pywsgi import WSGIServer, WSGIHandler, LoggingLogAdapter
+from gevent.pywsgi import WSGIServer, WSGIHandler
 from logging.handlers import RotatingFileHandler
 import warnings
 warnings.filterwarnings('ignore')
-import stslib
-from stslib import cfg, tool
+from stslib import cfg
 from stslib.cfg import ROOT_DIR
 from faster_whisper import WhisperModel
 import glob
@@ -89,7 +85,6 @@ def api():
 if __name__ == '__main__':
     http_server = None
     try:
-        threading.Thread(target=tool.checkupdate).start()
         try:
             if cfg.devtype=='cpu':
                 print('\n如果设备使用英伟达显卡并且CUDA环境已正确安装，可修改set.ini中\ndevtype=cpu 为 devtype=cuda, 然后重新启动以加快识别速度\n')
