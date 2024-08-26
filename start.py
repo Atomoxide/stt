@@ -61,13 +61,14 @@ def api():
 
         # invoke Faster Whisper
         segments,_ = model.transcribe(wav_file, beam_size=sets.get('beam_size'),best_of=sets.get('best_of'),temperature=0 if sets.get('temperature')==0 else [0.0,0.2,0.4,0.6,0.8,1.0],condition_on_previous_text=sets.get('condition_on_previous_text'),vad_filter=sets.get('vad'),
-    vad_parameters=dict(min_silence_duration_ms=300,max_speech_duration_s=10.5),language=language,initial_prompt=None if language!='zh' else sets.get('initial_prompt_zh'))
+    vad_parameters=dict(min_silence_duration_ms=300,max_speech_duration_s=60),language=language,initial_prompt=None if language!='zh' else sets.get('initial_prompt_zh'))
         os.remove(wav_file)
         # clauses concat
         clauses =[]
-        for  segment in segments:
+        for segment in segments:
             clause = segment.text.strip().replace('&#39;', "'")
             clause = re.sub(r'&#\d+;', '', clause)
+            clause = re.sub(r'[。，﹐,！!、]', ' ', clause)
 
             # 无有效字符
             if not clause or re.match(r'^[，。、？‘’“”；：（｛｝【】）:;"\'\s \d`!@#$%^&*()_+=.,?/\\-]*$', clause) or len(clause) <= 1:
